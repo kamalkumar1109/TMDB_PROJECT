@@ -8,12 +8,11 @@ export const fetchPopularMovies = createAsyncThunk(
   "movies/fetchPopularMovies",
   async (pageNo) => {
     const response = await axios.get(
-      `https://api.themoviedb.org/3/movie/popular?language=en-US&page=${pageNo}`,
+      `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&language=en-US&page=${pageNo}`,
       {
         headers: {
           Accept: "application/json",
-          Authorization:
-            `Bearer ${TMDB_API_KEY}`,
+          Authorization: `Bearer ${TMDB_API_KEY}`,
         },
       },
     );
@@ -31,14 +30,14 @@ const movieSlice = createSlice({
   },
   reducers: {
     changeToNextPage: (state, action) => {
-        state.pageNo += 1;
+      state.pageNo += 1;
     },
     changeToPrevPage: (state, action) => {
-        if(state.pageNo <= 1){
-            return;
-        }
-        state.pageNo -= 1;
-    }
+      if (state.pageNo <= 1) {
+        return;
+      }
+      state.pageNo -= 1;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -52,9 +51,9 @@ const movieSlice = createSlice({
       .addCase(fetchPopularMovies.rejected, (state, action) => {
         state.error = action.error.message;
         state.isLoading = false;
-      })
-  }
+      });
+  },
 });
 
-export const {changeToNextPage, changeToPrevPage} = movieSlice.actions;
+export const { changeToNextPage, changeToPrevPage } = movieSlice.actions;
 export default movieSlice.reducer;
