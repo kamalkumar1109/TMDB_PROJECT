@@ -5,9 +5,10 @@ import genreMapList from "../utils/genreListMap";
 const WatchListContext = createContext({
   watchList: [],
   addToWatchList: () => {},
+  removeFromWatchList: () => {},
   sortAscByRating: () => {},
   sortDescByRating: () => {},
-  genreList: []
+  genreList: [],
 });
 
 //This provider component is used to pass down the context in child elements.
@@ -18,23 +19,34 @@ export const WatchListContextProvider = (props) => {
 
   const [watchList, setWatchList] = useState(initialWatchList);
 
-  const [genreList, setGenreList] = useState(JSON.parse(window.localStorage.getItem('genreList') || JSON.stringify(['All Genre'])));
+  const [genreList, setGenreList] = useState(
+    JSON.parse(
+      window.localStorage.getItem("genreList") || JSON.stringify(["All Genre"]),
+    ),
+  );
 
+  const removeFromWatchList = (title) => {
+    setWatchList((prev) => prev.filter((movie) => movie.title !== title));
+  };
   const addToWatchList = (movie) => {
     // Please look out why use prevState not watchList directly
     setWatchList((prevState) => [...prevState, movie]);
-  
-    const genre = genreMapList.find((m)=>m.id===movie.genreId);
 
-    setGenreList(()=>[...new Set([...genreList, genre.name])])
+    const genre = genreMapList.find((m) => m.id === movie.genreId);
+
+    setGenreList(() => [...new Set([...genreList, genre.name])]);
   };
 
   const sortAscByRating = () => {
-    setWatchList((prevState)=>prevState.toSorted((m1,m2)=>m1.rating-m2.rating));
-  }
+    setWatchList((prevState) =>
+      prevState.toSorted((m1, m2) => m1.rating - m2.rating),
+    );
+  };
   const sortDescByRating = () => {
-    setWatchList((prevState)=>prevState.toSorted((m1,m2)=>m2.rating-m1.rating));
-  }
+    setWatchList((prevState) =>
+      prevState.toSorted((m1, m2) => m2.rating - m1.rating),
+    );
+  };
 
   useEffect(() => {
     window.localStorage.setItem("watchList", JSON.stringify(watchList));
@@ -46,9 +58,10 @@ export const WatchListContextProvider = (props) => {
   const context = {
     watchList: watchList,
     addToWatchList: addToWatchList,
+    removeFromWatchList: removeFromWatchList,
     sortAscByRating: sortAscByRating,
     sortDescByRating: sortDescByRating,
-    genreList: genreList
+    genreList: genreList,
   };
   return (
     <WatchListContext.Provider value={context}>

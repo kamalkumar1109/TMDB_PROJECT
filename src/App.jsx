@@ -4,6 +4,7 @@ import {Routes, Route} from 'react-router'
 import HomePage from './pages/HomePage'
 import WatchListPage from './pages/WatchListPage'
 
+
 const App = () => {
   return (
     <Layout>
