@@ -5,7 +5,7 @@ const Popup = ({ message, onClose }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose();
-    }, 2000); // disappears after 2 sec
+    }, 1000); // disappears after 2 sec
 
     return () => clearTimeout(timer);
   }, [onClose]);
