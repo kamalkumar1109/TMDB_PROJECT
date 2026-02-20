@@ -32,20 +32,23 @@ const Movie = (props) => {
 
   const genre = genreMapList.find((m) => m.id === props.genreId);
   return (
-    <figure className="bg-blue-200 rounded-lg w-2xs me-5 mb-5">
-      <img
-        className="w-xs rounded-lg"
-        src={`https://image.tmdb.org/t/p/w400${props.posterPath}`}
-        alt=""
-      />
-      <div className="flex justify-between items-start mt-2">
-        <figcaption className="flex flex-col ms-2 mb-1">
-          <h3 className="font-bold">{props.title}</h3>
-          <h4>{props.releaseDate}</h4>
-          <h4>{genre && genre.name}</h4>
-        </figcaption>
+    <figure onClick={props.onClick} className="cursor-pointer bg-blue-200 rounded-lg w-2xs me-5 mb-5">
+        <img
+          className="w-xs rounded-lg"
+          src={`https://image.tmdb.org/t/p/w400${props.posterPath}`}
+          alt=""
+        />
+        <div className="flex justify-between items-start mt-2">
+          <figcaption className="flex flex-col ms-2 mb-1">
+            <h3 className="font-bold">{props.title}</h3>
+            <h4>{props.releaseDate}</h4>
+            <h4>{genre && genre.name}</h4>
+          </figcaption>
         <button
-          onClick={addToWatchListHandler}
+          onClick={(event)=> {
+            event.stopPropagation();
+            addToWatchListHandler();
+          }}
           className="mr-3 mt-1 underline hover:cursor-pointer"
         >
           {alreadyExists ? (

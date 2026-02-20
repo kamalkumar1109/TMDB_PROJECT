@@ -8,6 +8,7 @@ import {
   changeToPrevPage,
   searchMovies,
 } from "../features/movies/movieSlice";
+import MovieDetailsModal from "../components/MovieDetailsModal";
 
 const HomePage = () => {
   const { data, error, isLoading, pageNo } = useSelector(
@@ -16,16 +17,18 @@ const HomePage = () => {
 
   const [searchKeyword, setSearchKeyword] = useState("");
 
+  const [selectedMovie, setSelectedMovie] = useState(null);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const timer = setTimeout(()=>{
-      if(searchKeyword.trim()===""){
+    const timer = setTimeout(() => {
+      if (searchKeyword.trim() === "") {
         dispatch(fetchPopularMovies(pageNo));
-      }else{
+      } else {
         dispatch(searchMovies(searchKeyword));
       }
-    },500);
+    }, 500);
     return () => clearTimeout(timer);
   }, [searchKeyword, dispatch, pageNo]);
 
@@ -42,25 +45,31 @@ const HomePage = () => {
           />
         </section>
       </div>
+      {selectedMovie && (
+        <MovieDetailsModal
+          movie={selectedMovie}
+          onClose={() => setSelectedMovie(null)}
+        />
+      )}
       {isLoading && <p className="text-center">Loading...</p>}
       {error && <p className="text-red-500 text-center">{error}</p>}
       <section className=" w-[70vw] mx-auto flex flex-wrap gap-1">
         {data &&
           data.results &&
-          data.results
-            .map((movie) => {
-              return (
-                <Movie
-                  key={movie.id}
-                  id={movie.id}
-                  title={movie.title}
-                  posterPath={movie.poster_path}
-                  releaseDate={movie.release_date}
-                  rating={movie.vote_average}
-                  genreId={movie.genre_ids[0]}
-                />
-              );
-            })}
+          data.results.map((movie) => {
+            return (
+              <Movie
+                key={movie.id}
+                id={movie.id}
+                title={movie.title}
+                posterPath={movie.poster_path}
+                releaseDate={movie.release_date}
+                rating={movie.vote_average}
+                genreId={movie.genre_ids[0]}
+                onClick={() => setSelectedMovie(movie)}
+              />
+            );
+          })}
       </section>
       <section className="flex justify-center my-5 gap-10">
         <button
