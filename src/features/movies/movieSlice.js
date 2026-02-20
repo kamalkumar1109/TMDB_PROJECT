@@ -4,11 +4,27 @@ import axios from "axios";
 
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
+export const searchMovies = createAsyncThunk(
+  "movies/searchMovies",
+  async(keyword) => {
+    const response = await axios.get(
+      `https://api.themoviedb.org/3/search/movie?query=${keyword}`,
+      {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${TMDB_API_KEY}`,
+        },
+      }
+    );
+    return response.data;
+  }
+);
+
 export const fetchPopularMovies = createAsyncThunk(
   "movies/fetchPopularMovies",
   async (pageNo) => {
     const response = await axios.get(
-      `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&language=en-US&page=${pageNo}`,
+      `https://api.themoviedb.org/3/movie/popular?language=en-US&page=${pageNo}`,
       {
         headers: {
           Accept: "application/json",
@@ -51,6 +67,17 @@ const movieSlice = createSlice({
       .addCase(fetchPopularMovies.rejected, (state, action) => {
         state.error = action.error.message;
         state.isLoading = false;
+      })
+      .addCase(searchMovies.pending,(state,action)=>{
+        state.isLoading=true;
+      })
+      .addCase(searchMovies.fulfilled,(state,action)=>{
+        state.isLoading=false;
+        state.data = action.payload;
+      })
+      .addCase(searchMovies.rejected,(state,action)=>{
+        state.isLoading=false;
+        state.error = `No movie found`;
       });
   },
 });
